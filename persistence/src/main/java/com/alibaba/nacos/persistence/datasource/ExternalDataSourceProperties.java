@@ -19,7 +19,10 @@ package com.alibaba.nacos.persistence.datasource;
 import com.alibaba.nacos.common.utils.CollectionUtils;
 import com.alibaba.nacos.common.utils.Preconditions;
 import com.alibaba.nacos.common.utils.StringUtils;
+import com.alibaba.nacos.persistence.utils.DatasourcePlatformUtil;
+import com.alibaba.nacos.plugin.datasource.constants.DataSourceConstant;
 import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.core.env.Environment;
@@ -36,13 +39,29 @@ import static com.alibaba.nacos.common.utils.CollectionUtils.getOrDefault;
  * @author Nacos
  */
 public class ExternalDataSourceProperties {
-    
+
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ExternalDataSourceProperties.class);
+
     private static final String JDBC_DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
-    
-    private static final String TEST_QUERY = "SELECT 1";
-    
+
+    private static final String TEST_QUERY_DEFAULT = "SELECT 1";
+
+    private static final String TEST_QUERY_ORACLE = "SELECT * FROM DUAL";
+
     private Integer num;
-    
+
+    private String driverClassName;
+
+    public void setDriverClassName(String driverClassName) {
+        driverClassName = StringUtils.isEmpty(driverClassName) ? JDBC_DRIVER_NAME : driverClassName;
+        this.driverClassName = driverClassName;
+    }
+
+    public String getDriverClassName() {
+        this.driverClassName = StringUtils.isEmpty(this.driverClassName) ? JDBC_DRIVER_NAME : this.driverClassName;
+        return driverClassName;
+    }
+
     private List<String> url = new ArrayList<>();
     
     private List<String> user = new ArrayList<>();
@@ -83,14 +102,22 @@ public class ExternalDataSourceProperties {
             Preconditions.checkArgument(url.size() >= currentSize, "db.url.%s is null", index);
             DataSourcePoolProperties poolProperties = DataSourcePoolProperties.build(environment);
             if (StringUtils.isEmpty(poolProperties.getDataSource().getDriverClassName())) {
-                poolProperties.setDriverClassName(JDBC_DRIVER_NAME);
+                poolProperties.setDriverClassName(this.getDriverClassName());
             }
+            LOGGER.info("Build datasource, index: {}, url: {}, driver: {}",
+                    index, url.get(index), poolProperties.getDataSource().getDriverClassName());
             poolProperties.setJdbcUrl(url.get(index).trim());
             poolProperties.setUsername(getOrDefault(user, index, user.get(0)).trim());
             poolProperties.setPassword(getOrDefault(password, index, password.get(0)).trim());
             HikariDataSource ds = poolProperties.getDataSource();
             if (StringUtils.isEmpty(ds.getConnectionTestQuery())) {
-                ds.setConnectionTestQuery(TEST_QUERY);
+                //base on the platform(spring.sql.init.platform=?) to set the connection test query
+                String platform = DatasourcePlatformUtil.getDatasourcePlatform(DataSourceConstant.MYSQL).toLowerCase();
+                if (DataSourceConstant.ORACLE.equals(platform) || DataSourceConstant.DM.equals(platform)) {
+                    ds.setConnectionTestQuery(TEST_QUERY_ORACLE);
+                } else {
+                    ds.setConnectionTestQuery(TEST_QUERY_DEFAULT);
+                }
             }
             
             dataSources.add(ds);

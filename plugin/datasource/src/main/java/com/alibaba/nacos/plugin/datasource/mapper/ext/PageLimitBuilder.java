@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2022 Alibaba Group Holding Ltd.
+ * Copyright 1999-2018 Alibaba Group Holding Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package com.alibaba.nacos.plugin.datasource.constants;
+package com.alibaba.nacos.plugin.datasource.mapper.ext;
 
 /**
- * The data source name.
+ * Page limitation Builder.
  *
- * @author hyx
- **/
+ * @author BugMaker
+ * @date 2026/07/15
+ */
+public final class PageLimitBuilder {
+    public static String offsetSql(int startRow, int pageSize) {
+        return " OFFSET " + startRow + " ROWS FETCH NEXT " + pageSize + " ROWS ONLY";
+    }
 
-public class DataSourceConstant {
-    public static final String MYSQL = "mysql";
-
-    public static final String SQLSERVER = "sqlserver";
-
-    public static final String POSTGRESQL = "postgresql";
-
-    public static final String DM = "dm";
-
-    public static final String ORACLE = "oracle";
-
-    public static final String DERBY = "derby";
+    public static String limitSql(int startRow, int pageSize) {
+        return " LIMIT " + pageSize + " OFFSET " + startRow;
+    }
 }

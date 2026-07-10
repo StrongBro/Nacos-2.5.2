@@ -150,6 +150,36 @@ public final class WhereBuilder {
                 .append(pageSize);
         return this;
     }
+
+    /**
+     * Build limit offset .
+     *
+     * @param startRow Start row
+     * @param pageSize Page size
+     * @return Return {@link WhereBuilder}
+     */
+    public WhereBuilder limitOffset(int startRow, int pageSize) {
+        where.append(" LIMIT ")
+                .append(pageSize)
+                .append(" OFFSET ")
+                .append(startRow);
+        return this;
+    }
+
+    /**
+     * Build limit offset .
+     *
+     * @param col col name
+     * @param order direction
+     * @return Return {@link WhereBuilder}
+     */
+    public WhereBuilder orderBy(String col, String order) {
+        where.append(" ORDER BY ")
+                .append(col)
+                .append(" ")
+                .append(order);
+        return this;
+    }
     
     /**
      * Build.

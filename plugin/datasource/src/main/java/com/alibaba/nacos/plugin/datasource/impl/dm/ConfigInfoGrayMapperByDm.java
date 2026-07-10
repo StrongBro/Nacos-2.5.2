@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.alibaba.nacos.plugin.datasource.impl.mysql;
+package com.alibaba.nacos.plugin.datasource.impl.dm;
 
 import com.alibaba.nacos.common.utils.CollectionUtils;
 import com.alibaba.nacos.plugin.datasource.constants.DataSourceConstant;
@@ -31,27 +31,26 @@ import java.util.Collections;
  * @author rong
  **/
 
-public class ConfigInfoGrayMapperByMySql extends AbstractMapperByMysql implements ConfigInfoGrayMapper {
-    
+public class ConfigInfoGrayMapperByDm extends AbstractMapperByDm implements ConfigInfoGrayMapper {
+
+    @Override
+    public MapperResult findChangeConfig(MapperContext context) {
+        String sql = "SELECT id, data_id, group_id, tenant_id, app_name,content,gray_name,gray_rule,md5, gmt_modified, encrypted_data_key "
+                        + "FROM config_info_gray WHERE " + "gmt_modified >= ? and id > ? order by id  limit ? ";
+        return new MapperResult(sql, CollectionUtils.list(context.getWhereParameter(FieldConstant.START_TIME),
+                context.getWhereParameter(FieldConstant.LAST_MAX_ID),
+                context.getWhereParameter(FieldConstant.PAGE_SIZE)));
+    }
+
     @Override
     public MapperResult findAllConfigInfoGrayForDumpAllFetchRows(MapperContext context) {
         String sql = " SELECT id,data_id,group_id,tenant_id,gray_name,gray_rule,app_name,content,md5,gmt_modified "
-                + " FROM  config_info_gray  ORDER BY id LIMIT " + context.getStartRow() + "," + context.getPageSize();
+                + " FROM  config_info_gray  ORDER BY id LIMIT " + context.getPageSize() + " OFFSET " + context.getStartRow();
         return new MapperResult(sql, Collections.emptyList());
     }
     
     @Override
     public String getDataSource() {
-        return DataSourceConstant.MYSQL;
-    }
-
-    @Override
-    public MapperResult findChangeConfig(MapperContext context) {
-        String sql =
-                "SELECT id, data_id, group_id, tenant_id, app_name,content,gray_name,gray_rule,md5, gmt_modified, encrypted_data_key "
-                        + "FROM config_info_gray WHERE " + "gmt_modified >= ? and id > ? order by id  limit ? ";
-        return new MapperResult(sql, CollectionUtils.list(context.getWhereParameter(FieldConstant.START_TIME),
-                context.getWhereParameter(FieldConstant.LAST_MAX_ID),
-                context.getWhereParameter(FieldConstant.PAGE_SIZE)));
+        return DataSourceConstant.DM;
     }
 }

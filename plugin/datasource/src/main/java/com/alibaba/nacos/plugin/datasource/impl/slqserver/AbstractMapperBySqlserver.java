@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package com.alibaba.nacos.plugin.datasource.constants;
+package com.alibaba.nacos.plugin.datasource.impl.slqserver;
+
+import com.alibaba.nacos.plugin.datasource.enums.sqlserver.TrustedSqlserverFunctionEnum;
+import com.alibaba.nacos.plugin.datasource.mapper.AbstractMapper;
 
 /**
- * The data source name.
+ * The abstract mysql mapper contains CRUD methods.
  *
- * @author hyx
+ * @author blake.qiu
  **/
+public abstract class AbstractMapperBySqlserver extends AbstractMapper {
 
-public class DataSourceConstant {
-    public static final String MYSQL = "mysql";
-
-    public static final String SQLSERVER = "sqlserver";
-
-    public static final String POSTGRESQL = "postgresql";
-
-    public static final String DM = "dm";
-
-    public static final String ORACLE = "oracle";
-
-    public static final String DERBY = "derby";
+    @Override
+    public String getFunction(String functionName) {
+        return TrustedSqlserverFunctionEnum.getFunctionByName(functionName);
+    }
 }

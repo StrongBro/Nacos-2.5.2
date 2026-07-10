@@ -67,14 +67,7 @@ public interface ConfigInfoGrayMapper extends Mapper {
      * @param context sql paramMap
      * @return The sql of querying change config.
      */
-    default MapperResult findChangeConfig(MapperContext context) {
-        String sql =
-                "SELECT id, data_id, group_id, tenant_id, app_name,content,gray_name,gray_rule,md5, gmt_modified, encrypted_data_key "
-                        + "FROM config_info_gray WHERE " + "gmt_modified >= ? and id > ? order by id  limit ? ";
-        return new MapperResult(sql, CollectionUtils.list(context.getWhereParameter(FieldConstant.START_TIME),
-                context.getWhereParameter(FieldConstant.LAST_MAX_ID),
-                context.getWhereParameter(FieldConstant.PAGE_SIZE)));
-    }
+    MapperResult findChangeConfig(MapperContext context);
     
     /**
      * Query all gray config info for dump task. The default sql: SELECT
