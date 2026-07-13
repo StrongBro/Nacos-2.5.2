@@ -19,8 +19,6 @@ package com.alibaba.nacos.plugin.datasource.impl.slqserver;
 import com.alibaba.nacos.plugin.datasource.constants.DataSourceConstant;
 import com.alibaba.nacos.plugin.datasource.mapper.TenantInfoMapper;
 
-import java.util.List;
-
 /**
  * The mysql implementation of TenantInfoMapper.
  *
