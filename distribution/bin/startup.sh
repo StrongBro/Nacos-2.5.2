@@ -98,7 +98,7 @@ else
     if [[ "${EMBEDDED_STORAGE}" == "embedded" ]]; then
         JAVA_OPT="${JAVA_OPT} -DembeddedStorage=true"
     fi
-    JAVA_OPT="${JAVA_OPT} -server ${CUSTOM_NACOS_MEMORY:- -Xms2g -Xmx2g -Xmn1g -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m}"
+    JAVA_OPT="${JAVA_OPT} -server ${CUSTOM_NACOS_MEMORY:- -Xms512m -Xmx2g -Xmn1g -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m}"
     JAVA_OPT="${JAVA_OPT} -XX:-OmitStackTraceInFastThrow -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${BASE_DIR}/logs/java_heapdump.hprof"
     JAVA_OPT="${JAVA_OPT} -XX:-UseLargePages"
 fi
