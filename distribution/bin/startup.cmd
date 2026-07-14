@@ -94,3 +94,6 @@ set COMMAND="%JAVA%" %NACOS_JVM_OPTS% %NACOS_OPTS% %NACOS_CONFIG_OPTS% %NACOS_LO
 
 rem start nacos command
 %COMMAND%
+
+rem stay in the command line window after startup
+pause

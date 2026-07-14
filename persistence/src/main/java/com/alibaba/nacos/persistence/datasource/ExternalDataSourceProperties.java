@@ -57,11 +57,6 @@ public class ExternalDataSourceProperties {
         this.driverClassName = driverClassName;
     }
 
-    public String getDriverClassName() {
-        this.driverClassName = StringUtils.isEmpty(this.driverClassName) ? JDBC_DRIVER_NAME : this.driverClassName;
-        return driverClassName;
-    }
-
     private List<String> url = new ArrayList<>();
     
     private List<String> user = new ArrayList<>();
@@ -101,8 +96,14 @@ public class ExternalDataSourceProperties {
             int currentSize = index + 1;
             Preconditions.checkArgument(url.size() >= currentSize, "db.url.%s is null", index);
             DataSourcePoolProperties poolProperties = DataSourcePoolProperties.build(environment);
+            //base on the platform(spring.sql.init.platform=?) to set the connection test query, default mysql
+            String platform = DatasourcePlatformUtil.getDatasourcePlatform(DataSourceConstant.MYSQL).toLowerCase();
             if (StringUtils.isEmpty(poolProperties.getDataSource().getDriverClassName())) {
-                poolProperties.setDriverClassName(this.getDriverClassName());
+                if (StringUtils.isEmpty(driverClassName)) {
+                    poolProperties.setDriverClassName(DatasourcePlatformUtil.getDriverClassName(platform));
+                } else {
+                    poolProperties.setDriverClassName(driverClassName);
+                }
             }
             LOGGER.info("Build datasource, index: {}, url: {}, driver: {}",
                     index, url.get(index), poolProperties.getDataSource().getDriverClassName());
@@ -111,8 +112,6 @@ public class ExternalDataSourceProperties {
             poolProperties.setPassword(getOrDefault(password, index, password.get(0)).trim());
             HikariDataSource ds = poolProperties.getDataSource();
             if (StringUtils.isEmpty(ds.getConnectionTestQuery())) {
-                //base on the platform(spring.sql.init.platform=?) to set the connection test query
-                String platform = DatasourcePlatformUtil.getDatasourcePlatform(DataSourceConstant.MYSQL).toLowerCase();
                 if (DataSourceConstant.ORACLE.equals(platform) || DataSourceConstant.DM.equals(platform)) {
                     ds.setConnectionTestQuery(TEST_QUERY_ORACLE);
                 } else {

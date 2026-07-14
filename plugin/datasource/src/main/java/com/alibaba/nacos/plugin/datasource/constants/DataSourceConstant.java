@@ -25,13 +25,26 @@ package com.alibaba.nacos.plugin.datasource.constants;
 public class DataSourceConstant {
     public static final String MYSQL = "mysql";
 
+    public static final String MYSQL_DRIVER = "com.mysql.cj.jdbc.Driver";
+
     public static final String SQLSERVER = "sqlserver";
+
+    public static final String SQLSERVER_DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 
     public static final String POSTGRESQL = "postgresql";
 
+    public static final String POSTGRESQL_DRIVER = "org.postgresql.Driver";
+
     public static final String DM = "dm";
+
+    public static final String DM_DRIVER = "dm.jdbc.driver.DmDriver";
 
     public static final String ORACLE = "oracle";
 
+    public static final String ORACLE_DRIVER = "oracle.jdbc.driver.OracleDriver";
+
     public static final String DERBY = "derby";
+
+    public static final String DERBY_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
+
 }

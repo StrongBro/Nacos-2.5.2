@@ -18,6 +18,7 @@ package com.alibaba.nacos.persistence.utils;
 
 import com.alibaba.nacos.common.utils.StringUtils;
 import com.alibaba.nacos.persistence.constants.PersistenceConstant;
+import com.alibaba.nacos.plugin.datasource.constants.DataSourceConstant;
 import com.alibaba.nacos.sys.env.EnvUtil;
 
 /**
@@ -40,4 +41,22 @@ public class DatasourcePlatformUtil {
         }
         return platform;
     }
+
+    public static String getDriverClassName(String platform) {
+        switch (platform) {
+            case DataSourceConstant.POSTGRESQL:
+                return DataSourceConstant.POSTGRESQL_DRIVER;
+            case DataSourceConstant.SQLSERVER:
+                return DataSourceConstant.SQLSERVER_DRIVER;
+            case DataSourceConstant.DM:
+                return DataSourceConstant.DM_DRIVER;
+            case DataSourceConstant.ORACLE:
+                return DataSourceConstant.ORACLE_DRIVER;
+            case DataSourceConstant.DERBY:
+                return DataSourceConstant.DERBY_DRIVER;
+            default:
+                return DataSourceConstant.MYSQL_DRIVER;
+        }
+    }
+
 }
